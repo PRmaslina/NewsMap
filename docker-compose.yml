@@ -1,0 +1,66 @@
+version: '3'
+services:
+  database:
+    image: 'postgres:17-alpine'
+    container_name: hell-database
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=database
+    volumes:
+      - ./db-data:/var/lib/postgresql/data # Вот здесь изменить путь к внешней бд
+    # command: >
+    #   postgres -c max_connections=1000
+    #            -c shared_buffers=256MB
+    #            -c effective_cache_size=768MB
+    #            -c maintenance_work_mem=64MB
+    #            -c checkpoint_completion_target=0.7
+    #            -c wal_buffers=16MB
+    #            -c default_statistics_target=100
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U user -d database" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    # restart: unless-stopped
+    tty: true
+    ports:
+      - '5432:5432'
+    stdin_open: true
+    networks:
+      - app-network
+  
+  backend:
+    build:
+      context: ./src/
+      dockerfile: Dockerfile
+    image: 'backend:latest'
+    container_name: hell-backend
+    ports:
+      - '8000:8000'
+    command: sh -c "uvicorn main:app --host 0.0.0.0 --port 8000"
+    depends_on:
+      database:
+        condition: service_healthy 
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    image: 'newsmap-frontend'
+    container_name: newsmap-frontend
+    ports:
+      - '5000:5000'
+    command: > 
+      sh -c "gunicorn --bind 0.0.0.0:5000 app:app"
+
+    networks:
+      - app-network
+      
+networks:
+  app-network:
+    driver: bridge
+
+

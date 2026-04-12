@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_c42fe408411dca2eea3a0d86f7eb054a {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_c42fe408411dca2eea3a0d86f7eb054a" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_c42fe408411dca2eea3a0d86f7eb054a = L.map(
+                "map_c42fe408411dca2eea3a0d86f7eb054a",
+                {
+                    center: [59.9724416, 30.3234217],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 10,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_b090f97727e740f5898cb4630ac156da = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_b090f97727e740f5898cb4630ac156da.addTo(map_c42fe408411dca2eea3a0d86f7eb054a);
+        
+    
+            var marker_606979489a012f71b3fca12a8477d8ba = L.marker(
+                [59.9724416, 30.3234217],
+                {
+}
+            ).addTo(map_c42fe408411dca2eea3a0d86f7eb054a);
+        
+    
+            var icon_8aeb977ed09d9e36c877f18fbbc9123f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8de700a6c643a2224ca6160d7a6245e9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_746a072f9e019d87cfa26b2b58b5823c = $(`<div id="html_746a072f9e019d87cfa26b2b58b5823c" style="width: 100.0%; height: 100.0%;">         <b>«Над нами многие подсмеивались» 95 лет назад родился советский физик, получивший Нобелевскую премию.</b><br>         📍 Санкт-Петербург, ЛЭТИ<br>         🕐 2024-12-13<br>         <a href="https://lenta.ru/articles/2024/12/13/alferov/" target="_blank">Читать</a>         </div>`)[0];
+                popup_8de700a6c643a2224ca6160d7a6245e9.setContent(html_746a072f9e019d87cfa26b2b58b5823c);
+            
+        
+
+        marker_606979489a012f71b3fca12a8477d8ba.bindPopup(popup_8de700a6c643a2224ca6160d7a6245e9)
+        ;
+
+        
+    
+    
+            marker_606979489a012f71b3fca12a8477d8ba.bindTooltip(
+                `<div>
+                     «Над нами многие подсмеивались» 95 лет назад родил
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_606979489a012f71b3fca12a8477d8ba.setIcon(icon_8aeb977ed09d9e36c877f18fbbc9123f);
+            
+    
+            var marker_61dcd9ebc28035521f462e472ba5eed5 = L.marker(
+                [55.7629749, 37.608354],
+                {
+}
+            ).addTo(map_c42fe408411dca2eea3a0d86f7eb054a);
+        
+    
+            var icon_cdf43dca1bf8e7d88b850ef3495f768f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2db4542e6bb6099da33d82c17bad8597 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8260263d548104c5e08a7bad0d4bfc44 = $(`<div id="html_8260263d548104c5e08a7bad0d4bfc44" style="width: 100.0%; height: 100.0%;">         <b>Пожар в центре Москвы</b><br>         📍 Москва, Тверская улица, 10<br>         🕐 2024-01-15<br>         <a href="https://example.com/news2" target="_blank">Читать</a>         </div>`)[0];
+                popup_2db4542e6bb6099da33d82c17bad8597.setContent(html_8260263d548104c5e08a7bad0d4bfc44);
+            
+        
+
+        marker_61dcd9ebc28035521f462e472ba5eed5.bindPopup(popup_2db4542e6bb6099da33d82c17bad8597)
+        ;
+
+        
+    
+    
+            marker_61dcd9ebc28035521f462e472ba5eed5.bindTooltip(
+                `<div>
+                     Пожар в центре Москвы
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_61dcd9ebc28035521f462e472ba5eed5.setIcon(icon_cdf43dca1bf8e7d88b850ef3495f768f);
+            
+    
+            var marker_559764de071d723fe65b67c7865ceff4 = L.marker(
+                [56.8219745, 60.6585342],
+                {
+}
+            ).addTo(map_c42fe408411dca2eea3a0d86f7eb054a);
+        
+    
+            var icon_1251be528a3fe85d04325dfc7032792a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8c66fb1f3131027408e812b7a72a750b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0ac91653ce4a4ca3574dce0b81f1e47c = $(`<div id="html_0ac91653ce4a4ca3574dce0b81f1e47c" style="width: 100.0%; height: 100.0%;">         <b>Авария на трассе М-5</b><br>         📍 Екатеринбург, Сибирский тракт, 25<br>         🕐 2024-01-16<br>         <a href="https://example.com/news3" target="_blank">Читать</a>         </div>`)[0];
+                popup_8c66fb1f3131027408e812b7a72a750b.setContent(html_0ac91653ce4a4ca3574dce0b81f1e47c);
+            
+        
+
+        marker_559764de071d723fe65b67c7865ceff4.bindPopup(popup_8c66fb1f3131027408e812b7a72a750b)
+        ;
+
+        
+    
+    
+            marker_559764de071d723fe65b67c7865ceff4.bindTooltip(
+                `<div>
+                     Авария на трассе М-5
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_559764de071d723fe65b67c7865ceff4.setIcon(icon_1251be528a3fe85d04325dfc7032792a);
+            
+</script>
+</html>
