@@ -1,21 +1,23 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-#from pymorphy3 import MorphAnalyzer
 from natasha import (
     Segmenter,
     
     NewsEmbedding,
     NewsNERTagger,
-    
+    NewsMorphTagger,
+
     PER,
     Doc
 )
+from pymorphy3 import MorphAnalyzer
 
 segmenter = Segmenter()
 
 emb = NewsEmbedding()
 ner_tagger = NewsNERTagger(emb)
+morph_tagger = NewsMorphTagger(emb)
 
 
 st_accept = "text/html" 
@@ -49,26 +51,29 @@ with open('News.json', 'w', encoding='utf-8') as file:
             title = news_soup.find(class_="topic-body _news").find('span').text
             subTitle = news_soup.find(class_="topic-body__title-yandex").text
             mainText = news_soup.find(class_="topic-body__content js-topic-body-content").text
-            doc = Doc(title + " " + subTitle + " " + mainText)
+            doc = Doc(title + subTitle + mainText)
 
-            #morph = MorphAnalyzer()
+            morph = MorphAnalyzer()
 
             doc.segment(segmenter)
             doc.tag_ner(ner_tagger)
-
-            #normalise = lambda text: morph.parse(text)[0].normal_form
+            doc.tag_morph(morph_tagger)
+            
+            normalise = lambda text: morph.parse(text)[0].normal_form
 
             flag = 1
             for i in doc.spans:
                 if i.type == 'LOC':
-                    position = i.text
+                    position = normalise(i.text)
                     flag = 0
                     break
             if flag:
                 continue
             tags = ""
-            for i in doc.spans:
-                tags += i.text + ", "
+            for token in doc.tokens:
+                if token.pos in ['ADP', 'CCONJ', 'PART', 'INTJ', 'PUNCT', 'ADJ']:
+                    continue
+                tags += normalise(token.text) + ", "
             tags = tags[:-2]
             news = {
                 "title" : news_soup.find(class_="topic-body _news").find('span').text,
@@ -79,6 +84,6 @@ with open('News.json', 'w', encoding='utf-8') as file:
                 "tags" : tags
             }
             json.dump(news,file, indent=4, ensure_ascii=False)
-            if link != links[-1] or page != 7:
+            if not (link == links[-1] or page == 7):
                 file.write(",\n")
     file.write("]")

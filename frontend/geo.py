@@ -35,7 +35,7 @@ def generate_map(news_list, selected_news_id=None, save_path="static/map.html"):
 
         popup_text = f"""
         <b>{news['title'][:100]}</b><br>
-        📍 {news['place']}<br>
+        📍 {news['position']}<br>
         🕐 {news['date']}<br>
         <a href="{news['url']}" target="_blank">Читать</a>
         """

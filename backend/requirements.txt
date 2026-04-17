@@ -4,6 +4,8 @@
 # datetime
 # uvicorn
 requests==2.33.1 # для парсера
+natasha
+pymorphy3
 
 annotated-doc==0.0.4
 annotated-types==0.7.0

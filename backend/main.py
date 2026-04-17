@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
+from urllib import parse as urlifyer
 
 from database import engine, Base, get_db
 from models import Article as ArticleModel
@@ -31,9 +32,12 @@ def create_article(article: ArticleCreate, db: Session = Depends(get_db)):
     return db_article
 
 @app.get("/articles", response_model=List[ArticleResponse])
-def get_articles(db: Session = Depends(get_db)):
-    # Get all Articles
-    articles = ArticleCRUD.get_all(db)
+async def get_articles(query: Optional[str] = Query('', description="Поисковый запрос"),db: Session = Depends(get_db)):
+    if not query:
+        articles = ArticleCRUD.get_all(db)
+    else:
+        query_str = urlifyer.unquote(query)
+        articles = ArticleCRUD.get_by_query(db, query_str)
     return articles
 
 @app.get("/articles/{article_id}", response_model=ArticleResponse)
@@ -60,6 +64,11 @@ def delete_article(article_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Article not found")
     return {"message": "Article deleted"}
 
+@app.get("/query/{query}")#, response_model=List[ArticleResponse])
+def get_articles_from_query(query: str, db: Session = Depends(get_db)):
+    return {"message":"gotcha"}
+    
+
 @app.get("/")
 def root():
-    return {"message": "Hello World", "endpoints": ["/articles", "/articles/{id}", "/docs"]}
+    return {"message": "Hello World", "endpoints": ["/articles", "/articles/{id}", "/articles?{query}", "/docs"]}

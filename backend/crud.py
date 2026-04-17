@@ -5,6 +5,7 @@ from schemas import ArticleCreate, ArticleUpdate
 from typing import List, Optional
 import time
 from geopy.geocoders import Nominatim
+from queryHandler import QueryParser
 locator = Nominatim(user_agent="newsmap_backend")
 
 class ArticleCRUD:
@@ -49,6 +50,35 @@ class ArticleCRUD:
         return db.query(Article).filter(Article.url == article_url).first()
     
     @staticmethod
+    def get_by_query(db: Session, query: str) -> List[Article]:
+        qp = QueryParser()
+        articles = ArticleCRUD.get_all(db)
+        relevant_news = []
+        parsing = qp.parse(query)
+        geo_weight = 1.5
+        tag_weight = 0.5
+        minimal_relevance = (len(parsing['geo'])*geo_weight + len(parsing['tags'])*tag_weight)/((geo_weight+tag_weight)*2)
+        for index, article in enumerate(articles):
+            tags = list(map(lambda x: x.lower(), article.tags.split(', ')))
+            
+            relevance = 0
+            if article.position in parsing['geo']:
+                relevance += geo_weight
+            
+            for tag in parsing['tags']:
+                if tag in tags:
+                    relevance += tag_weight
+
+            if relevance >= minimal_relevance:
+                relevant_news.append((index, relevance))
+        relevant_news.sort(key=lambda x: x[1])
+        relevant_news.reverse()
+        result = [articles[news[0]] for news in relevant_news]
+        return result
+            
+
+
+    @staticmethod
     def update(db: Session, article_id: int, article_update: ArticleUpdate) -> Optional[Article]:
         db_article = ArticleCRUD.get_by_id(db, article_id)
         if db_article:
@@ -82,3 +112,4 @@ class ArticleCRUD:
         count = db.query(Article).delete()
         db.commit()
         return count
+    
