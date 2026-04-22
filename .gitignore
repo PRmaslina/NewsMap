@@ -208,3 +208,7 @@ __marimo__/
 
 
 db-data
+geo-old.py
+app-old.py
+parser/test.py
+parser/parser-test.py
