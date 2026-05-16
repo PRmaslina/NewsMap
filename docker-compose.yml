@@ -1,4 +1,3 @@
-version: '3'
 services:
   database:
     image: 'postgres:17-alpine'
@@ -7,6 +6,9 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=database
+      - DATABASE_URL=postgresql+asyncpg://user:password@database:5432/database
+      - ENVIRONMENT=development
+
     volumes:
       - ./db-data:/var/lib/postgresql/data # Вот здесь изменить путь к внешней бд
     # command: >
@@ -39,9 +41,9 @@ services:
     container_name: newsmap-backend
     ports:
       - '8000:8000'
-    command: sh -c "uvicorn main:app --host 0.0.0.0 --port 8000"
+    command: sh -c "uvicorn interfaces.api.fastapi.main:app --host 0.0.0.0 --port 8000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s      # Проверять каждые 30 секунд
       timeout: 10s       # Таймаут ожидания ответа
       retries: 5         # Количество попыток до пометки как unhealthy

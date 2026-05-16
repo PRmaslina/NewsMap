@@ -13,7 +13,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Копируем остальной код приложения
-COPY . .
+COPY . /app
+ENV PYTHONPATH=/app
 
 # Создаем пользователя для запуска приложения (опционально, для безопасности)
 RUN useradd -m -u 1000 -p "$(openssl passwd -1 1234)" appuser && chown -R appuser:appuser /app
