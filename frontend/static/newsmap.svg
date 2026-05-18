@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="256px" height="256px" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+  
+  <!-- 1. Объявляем нашу графику как единый объект-переменную -->
+  <defs>
+    <g id="logo-shape">
+      <circle cx="200" cy="160" r="130" />
+      <polygon points="98,241 302,241 200,370" />
+    </g>
+  </defs>
+
+  <!-- 2. Вызываем объект и ОДНИМ атрибутом fill задаем цвет для всего сразу -->
+  <!-- Измените цвет здесь, и он поменяется и у круга, и у треугольника -->
+  <use href="#logo-shape" fill="#37a7d9" stroke="#37a7d9" stroke-width="10" stroke-linejoin="round" />
+
+  <polygon points="145,220 267.5,220 267.5,100 145,100" fill="white" stroke="blue" stroke-width="10" stroke-linejoin="round"/>
+  <polygon points="120,207.5 145,207.5 145,130 120,130" fill="white" stroke="blue" stroke-width="10" stroke-linejoin="round"/>
+  <circle cx="132.5" cy="207.5" r="12.5" fill="white" stroke="blue" stroke-width="10" />
+  <polygon points="125,207.5 140,207.5 140,135 125,135" fill="white" stroke="blue" stroke-width="0"/>
+  <polygon points="255,207.5 280,207.5 280,100 255,100" fill="white" stroke="blue" stroke-width="10" stroke-linejoin="round"/>
+  <circle cx="267.5" cy="207.5" r="12.5" fill="white" stroke="blue" stroke-width="10" />
+  <polygon points="240,207.5 275,207.5 275,105 240,105" fill="white" stroke="blue" stroke-width="0"/>
+  <polygon points="240,215 267.5,215 267.5,105 240,105" fill="white" stroke="blue" stroke-width="0"/>
+  <polygon points="267.5,215 267.5,225 132.5,225 132.5, 215" fill="blue"/>
+
+  <polygon points="210,124 260,124" stroke="black" stroke-width="12" stroke-linejoin="round"/>
+  <polygon points="210,148 260,148" stroke="black" stroke-width="12" stroke-linejoin="round"/>
+  <polygon points="165,172 260,172" stroke="black" stroke-width="12" stroke-linejoin="round"/>
+  <polygon points="165,196 260,196" stroke="black" stroke-width="12" stroke-linejoin="round"/>
+  <polygon points="165,124 194,124 194,148 165,148" fill="black" stroke="black" stroke-width="12" stroke-linejoin="round"/>
+
+</svg>
