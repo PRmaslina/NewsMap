@@ -1,3 +1,5 @@
+import logging
+import sys
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,6 +33,16 @@ async def lifespan(app: FastAPI):
 
     await db.close()
 
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format="%(asctime)s | %(levelname)-8s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
+logger = logging.getLogger(__name__)
+logger.info("✅ Logger test: INFO level")
+logger.debug("🐛 Logger test: DEBUG level")
 
 app = FastAPI(
     title="NewsMap API",

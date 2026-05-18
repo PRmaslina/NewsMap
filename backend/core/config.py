@@ -38,7 +38,9 @@ class Settings(BaseSettings):
     db_echo: bool = False
 
     # 🌍 Внешние сервисы
-    nominatim_user_agent: str = "NewsMap/1.0 (dev@example.com)"
+    nominatim_user_agent: str = (
+        "NewsMap/1.0 (https://github.com/PRmaslina/NewsMap, artmeln32@gmail.com)"
+    )
     nominatim_timeout: float = Field(default=10.0, gt=0)
     parser_concurrency: int = Field(default=5, ge=1, le=50)
     parser_user_agent: str = "NewsMap Parser/1.0"

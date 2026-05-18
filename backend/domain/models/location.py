@@ -36,6 +36,8 @@ class Coordinates:
 class Location:
     """Value Object: местоположение новости"""
 
+    region: str
+    city: str
     address: str
     coordinates: Optional[Coordinates] = None
     confidence: float = 0.0  # 0.0 - 1.0
@@ -47,8 +49,10 @@ class Location:
         """Проверка совпадения с гео-терминами поиска"""
         if not geo_terms:
             return 0.0
-        address_lower = self.address.lower()
-        matches = sum(1 for term in geo_terms if term.lower() in address_lower)
+        complete_address_lower = (
+            f"{self.region.lower()}, {self.city.lower()}, {self.address.lower()}"
+        )
+        matches = sum(1 for term in geo_terms if term.lower() in complete_address_lower)
         return matches / len(geo_terms)
 
     def is_within_bounds(
@@ -62,4 +66,3 @@ class Location:
             min_lat <= c.latitude <= max_lat  # type:ignore
             and min_lon <= c.longitude <= max_lon  # type:ignore
         )
-

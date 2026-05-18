@@ -4,6 +4,8 @@ from typing import List, Optional
 
 
 class LocationSchema(BaseModel):
+    region: str
+    city: str
     address: str
     latitude: Optional[float] = None
     longitude: Optional[float] = None
@@ -15,6 +17,7 @@ class ArticleCreateSchema(BaseModel):
     title: str = Field(..., min_length=1, max_length=500)
     subtitle: str = Field(..., min_length=10)
     published_at: datetime
+    location: LocationSchema
     tags: Optional[List[str]] = Field(default_factory=list)
 
     @field_validator("url")
@@ -27,7 +30,7 @@ class ArticleCreateSchema(BaseModel):
 
 class ArticleResponseSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id: str
+    id: int
     url: str
     title: str
     subtitle: str

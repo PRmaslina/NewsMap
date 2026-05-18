@@ -15,25 +15,22 @@ class SQLAlchemyArticleRepository(ArticleRepository):
 
     async def save(self, article: Article) -> None:
         orm_obj = ArticleORM.from_domain(article)
-
-        # Upsert: если существует — обновляем
-        existing = await self.session.execute(
-            select(ArticleORM).where(ArticleORM.url == article.content.url)
-        )
-        existing_orm = existing.scalar_one_or_none()
+        stmt = select(ArticleORM).where(ArticleORM.url == article.content.url)
+        existing_orm = (await self.session.execute(stmt)).scalar_one_or_none()
 
         if existing_orm:
-            # Обновляем поля
             for key, value in orm_obj.__dict__.items():
-                if key.startswith("_"):
+                if not key.startswith("_") and key != "_sa_instance_state":
                     setattr(existing_orm, key, value)
+            target_orm = existing_orm
         else:
             self.session.add(orm_obj)
+            target_orm = orm_obj
 
         await self.session.commit()
-
-        await self.session.refresh(orm_obj)
-        article.id = ArticleId(value=orm_obj.id)
+        await self.session.refresh(target_orm)
+        # Присваиваем ID обратно доменному объекту
+        article.id = ArticleId(value=target_orm.id)
 
     async def get_by_id(self, article_id: ArticleId) -> Optional[Article]:
         stmt = select(ArticleORM).where(ArticleORM.id == article_id.value)

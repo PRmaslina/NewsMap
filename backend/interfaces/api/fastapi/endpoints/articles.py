@@ -1,3 +1,4 @@
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +13,7 @@ from ..dependencies import get_create_article_handler, get_db_session
 from typing import List
 
 router = APIRouter(prefix="/articles", tags=["articles"])
+logger = logging.getLogger(__name__)
 
 
 @router.post(
@@ -27,10 +29,14 @@ async def create_article(
         title=dto.title,
         subtitle=dto.subtitle,
         published_at=dto.published_at,
+        region=dto.location.region,
+        city=dto.location.city,
+        address=dto.location.address,
         tags=dto.tags,
     )
 
     try:
+        logger.debug("trying create article")
         article_id = await handler.handle(cmd)
         # Возвращаем минимальный ответ (полные данные загрузятся при следующем запросе)
         return ArticleDTO.from_id(article_id)

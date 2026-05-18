@@ -1,7 +1,11 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import ClassVar, List, Protocol
-from .article import ArticleId
+from typing import ClassVar, List, Protocol, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .article import ArticleId
+
 from .location import Location
 
 

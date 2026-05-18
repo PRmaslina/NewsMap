@@ -41,7 +41,7 @@ services:
     container_name: newsmap-backend
     ports:
       - '8000:8000'
-    command: sh -c "uvicorn interfaces.api.fastapi.main:app --host 0.0.0.0 --port 8000"
+    command: sh -c "uvicorn interfaces.api.fastapi.main:app --host 0.0.0.0 --port 8000 --log-level debug"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s      # Проверять каждые 30 секунд

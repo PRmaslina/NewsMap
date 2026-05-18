@@ -24,6 +24,8 @@ class ArticleORM(Base):
     published_at = Column(DateTime(timezone=True), nullable=False, index=True)
 
     # Гео-данные
+    location_region = Column(String(500))
+    location_city = Column(String(500))
     location_address = Column(String(500))
     location_lat = Column(Float)
     location_lon = Column(Float)
@@ -55,13 +57,13 @@ class ArticleORM(Base):
                 latitude=self.location_lat, longitude=self.location_lon
             )
 
-        location = None
-        if self.location_address:
-            location = Location(
-                address=self.location_address,
-                coordinates=coordinates,
-                confidence=self.location_confidence or 0.0,
-            )
+        location = Location(
+            region=self.location_region,
+            city=self.location_city,
+            address=self.location_address,
+            coordinates=coordinates,
+            confidence=self.location_confidence or 0.0,
+        )
 
         # Восстанавливаем Article из сохранённых данных
         article = Article(
@@ -87,6 +89,8 @@ class ArticleORM(Base):
             title=article.content.title,
             subtitle=article.content.subtitle,
             published_at=article.content.published_at,
+            location_region=location.region if location else None,
+            location_city=location.city if location else None,
             location_address=location.address if location else None,
             location_lat=location.coordinates.latitude
             if location and location.coordinates

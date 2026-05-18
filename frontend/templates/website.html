@@ -11,7 +11,7 @@
 
         <div class="news-panel">
             <div class="news-header">
-                <h1>NewsMap</h1>
+                <h1><a href="/">NewsMap</a></h1>
                 <p>Последние новости с геолокацией</p>
             </div>
 
@@ -31,7 +31,7 @@
                             <p class="news-subTitle">{{ news.subtitle }}</p>
                             <div class="news-meta">
                                 <span class="news-place">📍 {{ news.place }}</span>
-                                <span class="news-date">🕐 {{ news.date.split('T')[0] }}</span>
+                                <span class="news-date">🕐 {{ news.published_at.split('T')[0] }}</span>
                             </div>
                         </a>
                     </li>

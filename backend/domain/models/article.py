@@ -4,6 +4,7 @@ from typing import List, Optional
 
 from .location import Location
 from .news_content import NewsContent
+from .events import DomainEvent, ArticleCreated, ArticleGeocoded
 # from ..services.geo_resolver import GeoResolver, GeoResult
 
 
@@ -14,8 +15,6 @@ class ArticleId:
 
 @dataclass
 class Article:
-    from .events import DomainEvent, ArticleCreated, ArticleGeocoded
-
     """
     Aggregate Root: Статья новости
 
@@ -27,7 +26,7 @@ class Article:
 
     id: ArticleId
     content: NewsContent
-    location: Optional[Location] = None
+    location: Location
     _relevance_score: float = 0.0
     _events: List[DomainEvent] = field(default_factory=list, init=False)
 
@@ -38,6 +37,9 @@ class Article:
         title: str,
         subtitle: str,
         published_at: datetime,
+        region: str,
+        city: str,
+        address: str,
         tags: Optional[List[str]] = None,
     ) -> "Article":
         """Factory method для создания новой статьи"""
@@ -50,12 +52,11 @@ class Article:
                 published_at=published_at,
                 tags=tags or [],
             ),
-        )
-        article._raise_event(
-            ArticleCreated(
-                article_id=ArticleId(value=0),
-                title=title,
-            )
+            location=Location(
+                region=region,
+                city=city,
+                address=address,
+            ),
         )
         return article
 

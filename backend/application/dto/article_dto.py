@@ -7,6 +7,8 @@ from domain.models.location import Location
 
 @dataclass
 class LocationDTO:
+    region: str
+    city: str
     address: str
     latitude: Optional[float] = None
     longitude: Optional[float] = None
@@ -16,6 +18,8 @@ class LocationDTO:
     def from_domain(cls, location: Location) -> "LocationDTO":
         coords = location.coordinates
         return cls(
+            region=location.region,
+            city=location.city,
             address=location.address,
             latitude=coords.latitude if coords else None,
             longitude=coords.longitude if coords else None,
