@@ -5,3 +5,4 @@ app-old.py
 parser/test.py
 parser/parser-test.py
 pyrightconfig.json
+backend/repo-to-text*
