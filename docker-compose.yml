@@ -8,49 +8,73 @@ services:
       - POSTGRES_DB=database
       - DATABASE_URL=postgresql+asyncpg://user:password@database:5432/database
       - ENVIRONMENT=development
-
     volumes:
-      - ./db-data:/var/lib/postgresql/data # Вот здесь изменить путь к внешней бд
-    # command: >
-    #   postgres -c max_connections=1000
-    #            -c shared_buffers=256MB
-    #            -c effective_cache_size=768MB
-    #            -c maintenance_work_mem=64MB
-    #            -c checkpoint_completion_target=0.7
-    #            -c wal_buffers=16MB
-    #            -c default_statistics_target=100
+      - ./db-data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U user -d database" ]
       start_period: 5s
       interval: 30s
       timeout: 10s
       retries: 5
-    # restart: unless-stopped
     tty: true
     ports:
       - '5432:5432'
     stdin_open: true
     networks:
       - app-network
-  
+
   backend:
     build:
       context: ./backend/
       dockerfile: Dockerfile
     image: 'backend:latest'
     container_name: newsmap-backend
+    volumes:
+      - natasha_cache:/app/.natasha_cache
+    environment:
+      - NATASHA_CACHE_DIR=/app/.natasha_cache
     ports:
       - '8000:8000'
     command: sh -c "uvicorn interfaces.api.fastapi.main:app --host 0.0.0.0 --port 8000 --log-level debug"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s      # Проверять каждые 30 секунд
-      timeout: 10s       # Таймаут ожидания ответа
-      retries: 5         # Количество попыток до пометки как unhealthy
-      start_period: 5s  # Время ожидания перед первым healthcheck
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
     depends_on:
       database:
-        condition: service_healthy 
+        condition: service_healthy
+    networks:
+      - app-network
+
+  parser:
+    build:
+      context: ./parser/
+      dockerfile: Dockerfile
+    image: 'newsmap-parser'
+    container_name: newsmap-parser
+    ports:
+      - '5001:5001'
+    environment:
+      - RUN_ON_START=false
+      # URL бэкенда внутри сети Docker
+      - BACKEND_URL=http://backend:8000
+      # Путь к модели внутри контейнера
+      - MODEL_PATH=models/good_news_finder.pkl
+    volumes:
+      # Модель и json_data берём снаружи, чтобы не пересобирать образ при обновлении
+      - ./parser/models:/app/models:ro
+      - ./parser/json_data:/app/json_data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      backend:
+        condition: service_healthy
     networks:
       - app-network
 
@@ -62,26 +86,30 @@ services:
     container_name: newsmap-frontend
     ports:
       - '5000:5000'
-    command: > 
+    command: >
       sh -c "gunicorn --bind 0.0.0.0:5000 app:app"
+    environment:
+      - FLASK_SECRET_KEY=82c158bf613f7c2d0ab7bc105cff7a4e88a3cc3ad705ab60
     depends_on:
       backend:
-        condition: service_healthy 
+        condition: service_healthy
     networks:
       - app-network
+
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80" # Пробрасываем стандартный 80 порт на ваш Arch Linux
+      - "80:80"
     volumes:
-      # Прокидываем наш конфиг внутрь контейнера NGINX
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./frontend/static:/var/www/static
     depends_on:
       - frontend
     networks:
       - app-network
+
 networks:
   app-network:
     driver: bridge
-
-
+volumes:
+  natasha_cache:

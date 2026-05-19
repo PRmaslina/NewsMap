@@ -1,6 +1,8 @@
 from fastapi import Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from domain.services.geo_resolver import GeoResolver
+from domain.services.query_processor import QueryProcessor
 from core.config import Settings
 from infrastructure.persistence.sqlalchemy.database import Database
 from infrastructure.persistence.sqlalchemy.repositories.article_repository_impl import (
@@ -10,7 +12,7 @@ from infrastructure.external.nominatim_geocoder import NominatimGeocoder
 from infrastructure.messaging.in_memory_event_bus import InMemoryEventBus
 from application.commands.create_article import CreateArticleHandler
 from application.commands.search_articles import SearchArticlesHandler
-
+from infrastructure.external.natasha_processor import NatashaQueryProcessor
 
 # ─────────────────────────────────────────────────────────────
 # 🔹 Базовые зависимости
@@ -49,9 +51,13 @@ def get_article_repository(
 # ─────────────────────────────────────────────────────────────
 
 
-def get_geo_service(settings: Settings = Depends(get_settings)) -> NominatimGeocoder:
+def get_geo_service(settings: Settings = Depends(get_settings)) -> GeoResolver:
     """Создаёт геокодер с конфигом"""
     return NominatimGeocoder(settings)
+
+
+def get_query_service() -> QueryProcessor:
+    return NatashaQueryProcessor()
 
 
 # ─────────────────────────────────────────────────────────────
@@ -71,7 +77,11 @@ def get_create_article_handler(
 
 
 def get_search_articles_handler(
-    repo=Depends(get_article_repository), events=Depends(get_event_bus)
+    repo=Depends(get_article_repository),
+    events=Depends(get_event_bus),
+    query=Depends(get_query_service),
 ) -> SearchArticlesHandler:
     """Собирает хендлер поиска статей"""
-    return SearchArticlesHandler(article_repo=repo, event_publisher=events)
+    return SearchArticlesHandler(
+        article_repo=repo, event_publisher=events, query_processor=query
+    )

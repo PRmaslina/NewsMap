@@ -1,10 +1,22 @@
+import logging
 from typing import List, Optional
-from sqlalchemy import select, and_, or_
+from sqlalchemy import (
+    literal,
+    select,
+    and_,
+    or_,
+    func,
+    cast,
+    Float,
+    literal_column,
+)
+from sqlalchemy.dialects.postgresql import REGCONFIG, JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
-
 from domain.models.article import Article, ArticleId
 from domain.repositories.article_repository import ArticleRepository
 from ..models import ArticleORM
+
+logger = logging.getLogger(__name__)
 
 
 class SQLAlchemyArticleRepository(ArticleRepository):
@@ -17,7 +29,6 @@ class SQLAlchemyArticleRepository(ArticleRepository):
         orm_obj = ArticleORM.from_domain(article)
         stmt = select(ArticleORM).where(ArticleORM.url == article.content.url)
         existing_orm = (await self.session.execute(stmt)).scalar_one_or_none()
-
         if existing_orm:
             for key, value in orm_obj.__dict__.items():
                 if not key.startswith("_") and key != "_sa_instance_state":
@@ -26,11 +37,9 @@ class SQLAlchemyArticleRepository(ArticleRepository):
         else:
             self.session.add(orm_obj)
             target_orm = orm_obj
-
         await self.session.commit()
         await self.session.refresh(target_orm)
-        # Присваиваем ID обратно доменному объекту
-        article.id = ArticleId(value=target_orm.id)
+        article.id = ArticleId(value=target_orm.id)  # type: ignore[var-annotated]
 
     async def get_by_id(self, article_id: ArticleId) -> Optional[Article]:
         stmt = select(ArticleORM).where(ArticleORM.id == article_id.value)
@@ -48,33 +57,6 @@ class SQLAlchemyArticleRepository(ArticleRepository):
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none() is not None
 
-    async def find_by_geo_bounds(
-        self,
-        min_lat: float,
-        max_lat: float,
-        min_lon: float,
-        max_lon: float,
-        limit: int = 100,
-    ) -> List[Article]:
-        stmt = (
-            select(ArticleORM)
-            .where(
-                and_(
-                    ArticleORM.location_lat.isnot(None),
-                    ArticleORM.location_lon.isnot(None),
-                    ArticleORM.location_lat >= min_lat,
-                    ArticleORM.location_lat <= max_lat,
-                    ArticleORM.location_lon >= min_lon,
-                    ArticleORM.location_lon <= max_lon,
-                )
-            )
-            .order_by(ArticleORM.published_at.desc())
-            .limit(limit)
-        )
-
-        result = await self.session.execute(stmt)
-        return [orm.to_domain() for orm in result.scalars().all()]
-
     async def search(
         self,
         query_text: str,
@@ -82,27 +64,59 @@ class SQLAlchemyArticleRepository(ArticleRepository):
         min_relevance: float = 0.0,
         limit: int = 50,
     ) -> List[Article]:
-        # Простой полнотекстовый поиск (для продакшена лучше использовать pgvector/tsvector)
         conditions = []
+        rank = func.cast(literal(0.0), Float)
 
-        if query_text:
-            search_lower = f"%{query_text.lower()}%"
-            conditions.append(
-                or_(
-                    ArticleORM.title.ilike(search_lower),
-                    ArticleORM.subtitle.ilike(search_lower),
-                )
+        if query_text.strip():
+            # ✅ plainto_tsquery безопаснее для естественного языка
+            tags_vector = func.jsonb_to_tsvector(
+                cast("russian", REGCONFIG),
+                ArticleORM.tags,
+                cast(literal_column("'[\"string\"]'"), JSONB),
             )
 
+            # Тогда общий вектор собирается так:
+            search_vec = func.to_tsvector(
+                "russian",
+                func.coalesce(ArticleORM.title, "")
+                + " "
+                + func.coalesce(ArticleORM.subtitle, ""),
+            ).concat(tags_vector)
+            search_query = func.plainto_tsquery("russian", query_text)
+            rank = func.ts_rank_cd(search_vec, search_query)
+            conditions.append(search_vec.op("@@")(search_query))
+
         if geo_terms:
-            for term in geo_terms:
-                conditions.append(ArticleORM.location_address.ilike(f"%{term}%"))
+            geo_conditions = [
+                or_(
+                    func.lower(ArticleORM.location_city).contains(term.lower().strip()),
+                    func.lower(ArticleORM.location_address).contains(
+                        term.lower().strip()
+                    ),
+                    func.lower(ArticleORM.location_region).contains(
+                        term.lower().strip()
+                    ),
+                )
+                for term in geo_terms
+                if term.strip()
+            ]
+            if geo_conditions:
+                conditions.append(or_(*geo_conditions))
 
-        stmt = select(ArticleORM)
+        stmt = select(ArticleORM, rank.label("search_rank"))
         if conditions:
-            stmt = stmt.where(or_(*conditions))
+            stmt = stmt.where(and_(*conditions))
 
-        stmt = stmt.order_by(ArticleORM.published_at.desc()).limit(limit)
+        if query_text.strip() and min_relevance > 0:
+            stmt = stmt.where(rank >= min_relevance)
+
+        stmt = stmt.order_by(rank.desc(), ArticleORM.published_at.desc()).limit(limit)
+
         result = await self.session.execute(stmt)
-
-        return [orm.to_domain() for orm in result.scalars().all()]
+        articles = []
+        for row in result.all():
+            article = row[0].to_domain()
+            raw_score = float(row[1])
+            article._relevance_score = min(1.0, max(0.0, raw_score))
+            articles.append(article)
+        return articles

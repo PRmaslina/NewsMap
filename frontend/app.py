@@ -1,25 +1,41 @@
 from datetime import *
 import re
 from geopy.geocoders import Nominatim
-from flask import *
+from flask import Flask, request, render_template, url_for, redirect, jsonify, flash
 from geo import generate_map
 import requests
 from urllib import parse as urlifyer
+from typing import Optional
+import os
 
 app = Flask(__name__)
-
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-fallback-key-12345")
 
 locator = Nominatim(user_agent="my_news_app")
 BACKEND_URL = "http://backend:8000"
 
 
-def get_news(query: str = ""):
+def get_news():
     url = f"{BACKEND_URL}/articles"
-    if query:
-        url += "?query=" + urlifyer.quote(query)
     resp = requests.get(url)
     resp.raise_for_status()
     return resp.json()
+
+
+def search_backend(
+    query: str, lat: Optional[float] = None, lon: Optional[float] = None
+):
+    url = f"{BACKEND_URL}/search"
+
+    payload = {
+        "query": query,
+        "geo_keywords": [],
+        "min_relevance": 0.1,
+        "limit": 50,
+    }
+    resp = requests.post(url, json=payload, timeout=5)
+    resp.raise_for_status()
+    return resp.json().get("articles", [])
 
 
 def filter_news_by_date(all_news, days):
@@ -43,24 +59,21 @@ def index():
 @app.route("/search", methods=["POST"])
 def search():
     query = (request.form.get("query", "") or "").strip().lower()
+
+    # ✅ Если запрос пустой — редирект на главную
+    if not query:
+        flash("Введите поисковый запрос 🔍", "info")
+        return redirect(url_for("index"))
+
     lat, lon = None, None
-    filtered_news = get_news(query)
+    location = locator.geocode(query)
+    if location:
+        lat, lon = location.latitude, location.longitude  # type:ignore
 
-    if query:
-        location = locator.geocode(query)
-        if location:
-            lat, lon = location.latitude, location.longitude
-
-    if lat and lon:
-        generate_map(filtered_news, center_lat=lat, center_lon=lon, center_zoom=8)
-    else:
-        generate_map(filtered_news)
-
+    fresh_news = search_backend(query, lat, lon)
+    generate_map(fresh_news, center_lat=lat, center_lon=lon)
     return render_template(
-        "website.html",
-        news_list=filtered_news,
-        search_query=query,
-        selected_news_id=None,
+        "website.html", news_list=fresh_news, search_query=query, selected_news_id=None
     )
 
 
@@ -83,9 +96,8 @@ def show_news(news_id):
             "website.html", news_list=[selected_news], selected_news_id=news_id
         )
     else:
-        return redirect(url_for("website"))
+        return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-

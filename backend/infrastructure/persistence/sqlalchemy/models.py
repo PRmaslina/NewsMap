@@ -1,8 +1,19 @@
-from sqlalchemy import BigInteger, Column, String, Text, Float, DateTime, Boolean, Index
+from sqlalchemy import (
+    BigInteger,
+    Column,
+    String,
+    Text,
+    Float,
+    DateTime,
+    Boolean,
+    Index,
+    func,
+)
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 import uuid
 from datetime import datetime, timezone
+from sqlalchemy.dialects.postgresql import TSVECTOR
 
 from domain.models.article import Article, ArticleId
 from domain.models.location import Location, Coordinates
@@ -45,7 +56,14 @@ class ArticleORM(Base):
     # Индексы для гео-поиска
     __table_args__ = (
         Index("idx_articles_geo", "location_lat", "location_lon"),
-        Index("idx_articles_search", "title", "subtitle"),
+        # 🔹 GIN-индекс для полнотекстового поиска
+        Index(
+            "idx_articles_fts",
+            func.to_tsvector(
+                "russian", func.coalesce(title, "") + " " + func.coalesce(subtitle, "")
+            ),
+            postgresql_using="gin",
+        ),
     )
 
     def to_domain(self) -> "Article":

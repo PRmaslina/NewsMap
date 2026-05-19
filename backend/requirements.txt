@@ -50,7 +50,7 @@ rich==14.3.3
 rich-toolkit==0.19.7
 rignore==0.7.6
 sentry-sdk==2.56.0
-setuptools==82.0.1
+setuptools<70
 shellingham==1.5.4
 slovnet==0.6.0
 sortedcontainers==2.4.0
@@ -65,3 +65,4 @@ uvloop==0.22.1
 watchfiles==1.1.1
 websockets==16.0
 yargy==0.16.0
+geoalchemy2==0.15.0

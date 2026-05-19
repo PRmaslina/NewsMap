@@ -4,6 +4,7 @@ from typing import List, Optional
 
 
 class LocationSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     region: str
     city: str
     address: str
