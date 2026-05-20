@@ -1,5 +1,6 @@
 import logging
 from typing import List, Optional
+from datetime import datetime
 from sqlalchemy import (
     literal,
     select,
@@ -13,6 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import REGCONFIG, JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 from domain.models.article import Article, ArticleId
+from domain.share.value_objects.date_range import DateRange
 from domain.repositories.article_repository import ArticleRepository
 from ..models import ArticleORM
 
@@ -61,6 +63,7 @@ class SQLAlchemyArticleRepository(ArticleRepository):
         self,
         query_text: str,
         geo_terms: List[str],
+        date_range: DateRange,
         min_relevance: float = 0.0,
         limit: int = 50,
     ) -> List[Article]:
@@ -102,6 +105,13 @@ class SQLAlchemyArticleRepository(ArticleRepository):
             ]
             if geo_conditions:
                 conditions.append(or_(*geo_conditions))
+
+        if date_range:
+            conditions.append(
+                ArticleORM.published_at.between(
+                    date_range.date_from, date_range.date_to
+                )
+            )
 
         stmt = select(ArticleORM, rank.label("search_rank"))
         if conditions:

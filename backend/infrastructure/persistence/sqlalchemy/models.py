@@ -53,10 +53,11 @@ class ArticleORM(Base):
         onupdate=datetime.now,
     )
 
-    # Индексы для гео-поиска
     __table_args__ = (
+        # Гео-индексы
         Index("idx_articles_geo", "location_lat", "location_lon"),
-        # 🔹 GIN-индекс для полнотекстового поиска
+        Index("idx_articles_geo_bbox", "location_lat", "location_lon"),
+        # Полнотекстовые GIN-индексы
         Index(
             "idx_articles_fts",
             func.to_tsvector(
@@ -64,6 +65,21 @@ class ArticleORM(Base):
             ),
             postgresql_using="gin",
         ),
+        Index(
+            "idx_articles_fts_v2",
+            func.to_tsvector(
+                "russian",
+                func.coalesce(title, "")
+                + " "
+                + func.coalesce(subtitle, "")
+                + " "
+                + func.coalesce(func.cast(tags, String), ""),
+            ),
+            postgresql_using="gin",
+        ),
+        # Остальные btree-индексы
+        Index("idx_articles_search", "title", "subtitle"),
+        Index("ix_articles_published_at", "published_at"),
     )
 
     def to_domain(self) -> "Article":

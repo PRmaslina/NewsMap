@@ -62,7 +62,7 @@
                             <h4 class="news-title">{{ news.title }}</h4>
                             <p class="news-subTitle">{{ news.subtitle }}</p>
                             <div class="news-meta">
-                                <span class="news-place">📍 {{ news.place }}</span>
+                              <span class="news-place">📍 {{ news.location.city }}</span>
                                 <span class="news-date">🕐 {{ news.published_at.split('T')[0] }}</span>
                             </div>
                         </a>
@@ -71,7 +71,7 @@
                 {% else %}
                     <div class="no-results">Новостей пока нет...</div>
                 {% endif %}
-                </ul>
+            </ul>
         </div>
 
         <div class="map-panel">
