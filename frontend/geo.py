@@ -1,7 +1,6 @@
 import folium
 from folium.plugins import MarkerCluster
 import os
-import sys
 
 
 def generate_map(

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from ..models.article import Article, ArticleId
+from ..shared.value_objects.date_range import DateRange
 
 
 class ArticleRepository(ABC):
@@ -31,6 +32,7 @@ class ArticleRepository(ABC):
         self,
         query_text: str,
         geo_terms: List[str],
+        date_range: DateRange,
         min_relevance: float = 0.0,
         limit: int = 50,
     ) -> List[Article]:

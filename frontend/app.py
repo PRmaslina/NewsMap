@@ -1,18 +1,70 @@
 from datetime import *
-import re
-from geopy.geocoders import Nominatim
 from flask import Flask, request, render_template, url_for, redirect, jsonify, flash
 from geo import generate_map
 import requests
-from urllib import parse as urlifyer
-from typing import Optional
 import os
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-fallback-key-12345")
 
-locator = Nominatim(user_agent="my_news_app")
 BACKEND_URL = "http://backend:8000"
+
+
+def parse_single_date(query):
+    import re
+
+    patterns = [
+        r"(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})",  # ä.ì.ã
+        r"(\d{4})[\.\-/](\d{2})[\.\-/](\d{2})",  # ã-ì-ä
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, query)
+        if match:
+            try:
+                if len(match.group(1)) == 4:
+                    year, month, day = (
+                        int(match.group(1)),
+                        int(match.group(2)),
+                        int(match.group(3)),
+                    )
+                else:
+                    day, month, year = (
+                        int(match.group(1)),
+                        int(match.group(2)),
+                        int(match.group(3)),
+                    )
+                return datetime(year, month, day).date()
+            except:
+                pass
+    return None
+
+
+def parse_date_range(query):
+    import re
+
+    pattern = r"(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})\s*[-–]\s*(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})"
+    match = re.search(pattern, query)
+
+    if match:
+        try:
+            day1, month1, year1 = (
+                int(match.group(1)),
+                int(match.group(2)),
+                int(match.group(3)),
+            )
+            day2, month2, year2 = (
+                int(match.group(4)),
+                int(match.group(5)),
+                int(match.group(6)),
+            )
+
+            date_from = datetime(year1, month1, day1).date()
+            date_to = datetime(year2, month2, day2).date()
+            return date_from, date_to
+        except:
+            pass
+    return None, None
 
 
 def get_news():
@@ -22,9 +74,7 @@ def get_news():
     return resp.json()
 
 
-def search_backend(
-    query: str, lat: Optional[float] = None, lon: Optional[float] = None
-):
+def search_backend(query: str):
     url = f"{BACKEND_URL}/search"
 
     payload = {
@@ -60,18 +110,17 @@ def index():
 def search():
     query = (request.form.get("query", "") or "").strip().lower()
 
-    # ✅ Если запрос пустой — редирект на главную
     if not query:
         flash("Введите поисковый запрос 🔍", "info")
         return redirect(url_for("index"))
 
+    fresh_news = search_backend(query)
     lat, lon = None, None
-    location = locator.geocode(query)
-    if location:
-        lat, lon = location.latitude, location.longitude  # type:ignore
-
-    fresh_news = search_backend(query, lat, lon)
-    generate_map(fresh_news, center_lat=lat, center_lon=lon)
+    if fresh_news:
+        location = fresh_news[0].location
+        lat = location.latitude
+        lon = location.longitude
+        generate_map(fresh_news, center_lat=lat, center_lon=lon)
     return render_template(
         "website.html", news_list=fresh_news, search_query=query, selected_news_id=None
     )

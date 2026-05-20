@@ -2,12 +2,13 @@ from dataclasses import dataclass
 from typing import List
 from datetime import datetime, timezone
 from domain.services.query_processor import QueryProcessor
-from domain.models.article import Article
+from domain.shared.value_objects.date_range import DateRange
 from domain.repositories.article_repository import ArticleRepository
 from application.dto.article_dto import ArticleDTO
 from application.interfaces.event_publisher import EventPublisherPort
 from domain.models.events import ArticleSearchPerformed
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class SearchArticlesCommand:
     query_text: str
-    geo_terms: List[str]
+    date_range: DateRange
     min_relevance: float = 0.0
     limit: int = 50
 
@@ -34,11 +35,11 @@ class SearchArticlesHandler:
     async def handle(self, cmd: SearchArticlesCommand) -> List[ArticleDTO]:
         start_time = datetime.now(timezone.utc)
         processed = await self.query.process(cmd.query_text)
-        all_geo_terms = list(set(cmd.geo_terms + processed.geo_terms))
 
         articles = await self.repo.search(
             query_text=processed.query,
-            geo_terms=all_geo_terms,
+            geo_terms=processed.geo_terms,
+            date_range=cmd.date_range,
             min_relevance=cmd.min_relevance,
             limit=cmd.limit,
         )
@@ -53,11 +54,8 @@ class SearchArticlesHandler:
                 * 1000,
             )
         )
-        logger.info(
-            f"🔍 Запрос: {cmd.query_text} | Гео: {cmd.geo_terms} | Порог: {cmd.min_relevance}"
-        )
+        logger.info(f"🔍 Запрос: {cmd.query_text} | Порог: {cmd.min_relevance}")
         logger.info(
             f"📦 Natasha вернула: query='{processed.query}', geo={processed.geo_terms}"
         )
-        logger.info(f"🌐 Итоговые geo_terms: {all_geo_terms}")
         return [ArticleDTO.from_domain(a) for a in articles]
