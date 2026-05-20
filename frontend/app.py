@@ -88,7 +88,7 @@ def search():
     if date_from and date_to:
         for news in all_news:
             try:
-                news_date = datetime.strptime(news.get('published_at', '').split('T')[0], '%Y-%m-%d').date()
+                news_date = datetime.strptime(news.get('date', '').split('T')[0], '%Y-%m-%d').date()
                 if date_from <= news_date <= date_to:
                     filtered_news.append(news)
             except:
@@ -109,7 +109,7 @@ def search():
     if single_date:
         for news in all_news:
             try:
-                news_date = datetime.strptime(news.get('published_at', '').split('T')[0], '%Y-%m-%d').date()
+                news_date = datetime.strptime(news.get('date', '').split('T')[0], '%Y-%m-%d').date()
                 if news_date == single_date:
                     filtered_news.append(news)
             except:
