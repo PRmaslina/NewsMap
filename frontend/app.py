@@ -10,63 +10,6 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-fallback-key-12345")
 BACKEND_URL = "http://backend:8000"
 
 
-def parse_single_date(query):
-    import re
-
-    patterns = [
-        r"(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})",  # ä.ì.ã
-        r"(\d{4})[\.\-/](\d{2})[\.\-/](\d{2})",  # ã-ì-ä
-    ]
-
-    for pattern in patterns:
-        match = re.search(pattern, query)
-        if match:
-            try:
-                if len(match.group(1)) == 4:
-                    year, month, day = (
-                        int(match.group(1)),
-                        int(match.group(2)),
-                        int(match.group(3)),
-                    )
-                else:
-                    day, month, year = (
-                        int(match.group(1)),
-                        int(match.group(2)),
-                        int(match.group(3)),
-                    )
-                return datetime(year, month, day).date()
-            except:
-                pass
-    return None
-
-
-def parse_date_range(query):
-    import re
-
-    pattern = r"(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})\s*[-–]\s*(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})"
-    match = re.search(pattern, query)
-
-    if match:
-        try:
-            day1, month1, year1 = (
-                int(match.group(1)),
-                int(match.group(2)),
-                int(match.group(3)),
-            )
-            day2, month2, year2 = (
-                int(match.group(4)),
-                int(match.group(5)),
-                int(match.group(6)),
-            )
-
-            date_from = datetime(year1, month1, day1).date()
-            date_to = datetime(year2, month2, day2).date()
-            return date_from, date_to
-        except:
-            pass
-    return None, None
-
-
 def get_news():
     url = f"{BACKEND_URL}/articles"
     resp = requests.get(url)
@@ -74,12 +17,12 @@ def get_news():
     return resp.json()
 
 
-def search_backend(query: str):
+def search_backend(query: str, date_from: datetime, date_to: datetime):
     url = f"{BACKEND_URL}/search"
 
     payload = {
         "query": query,
-        "geo_keywords": [],
+        "date_range": {"date_from": date_from, "date_to": date_to},
         "min_relevance": 0.1,
         "limit": 50,
     }

@@ -66,3 +66,7 @@ watchfiles==1.1.1
 websockets==16.0
 yargy==0.16.0
 geoalchemy2==0.15.0
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1
+aiosqlite==0.20.0
