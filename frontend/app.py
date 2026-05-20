@@ -30,6 +30,43 @@ def filter_news_by_date(all_news, days):
             filtered_news.append(news)
     return filtered_news
 
+def parse_single_date(query):
+    import re
+    patterns = [
+        r'(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})',  # ä.ì.ã
+        r'(\d{4})[\.\-/](\d{2})[\.\-/](\d{2})',  # ã-ì-ä
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, query)
+        if match:
+            try:
+                if len(match.group(1)) == 4:
+                    year, month, day = int(match.group(1)), int(match.group(2)), int(match.group(3))
+                else:
+                    day, month, year = int(match.group(1)), int(match.group(2)), int(match.group(3))
+                return datetime(year, month, day).date()
+            except:
+                pass
+    return None
+
+
+def parse_date_range(query):
+    import re
+    pattern = r'(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})\s*[-–]\s*(\d{2})[\.\-/](\d{2})[\.\-/](\d{4})'
+    match = re.search(pattern, query)
+    
+    if match:
+        try:
+            day1, month1, year1 = int(match.group(1)), int(match.group(2)), int(match.group(3))
+            day2, month2, year2 = int(match.group(4)), int(match.group(5)), int(match.group(6))
+            
+            date_from = datetime(year1, month1, day1).date()
+            date_to = datetime(year2, month2, day2).date()
+            return date_from, date_to
+        except:
+            pass
+    return None, None
 
 @app.route('/')
 def index():
@@ -41,13 +78,59 @@ def index():
 def search():
     query = (request.form.get('query', '') or '').strip().lower()
     lat, lon = None, None
+    filtered_news = []
+    date_info = None 
+    
+    all_news = get_news()
+
+    date_from, date_to = parse_date_range(query)
+    
+    if date_from and date_to:
+        for news in all_news:
+            try:
+                news_date = datetime.strptime(news.get('published_at', '').split('T')[0], '%Y-%m-%d').date()
+                if date_from <= news_date <= date_to:
+                    filtered_news.append(news)
+            except:
+                continue
+        generate_map(filtered_news)
+        date_info = f"{date_from.strftime('%d.%m.%Y')} — {date_to.strftime('%d.%m.%Y')}"
+        
+        return render_template(
+            "website.html",
+            news_list=filtered_news,
+            search_query=query,
+            selected_news_id=None,
+            date_info=date_info
+        )
+    
+    single_date = parse_single_date(query)
+    
+    if single_date:
+        for news in all_news:
+            try:
+                news_date = datetime.strptime(news.get('published_at', '').split('T')[0], '%Y-%m-%d').date()
+                if news_date == single_date:
+                    filtered_news.append(news)
+            except:
+                continue
+        generate_map(filtered_news)
+        date_info = f"{single_date.strftime('%d.%m.%Y')}"
+        
+        return render_template(
+            "website.html",
+            news_list=filtered_news,
+            search_query=query,
+            selected_news_id=None,
+            date_info=date_info
+        )
+    
     filtered_news = get_news(query)
 
     if query:
         location = locator.geocode(query)
         if location:
             lat, lon = location.latitude, location.longitude
-
 
     if lat and lon:
         generate_map(filtered_news, center_lat=lat, center_lon=lon, center_zoom=8)
@@ -58,8 +141,10 @@ def search():
         "website.html",
         news_list=filtered_news,
         search_query=query,
-        selected_news_id=None
+        selected_news_id=None,
+        date_info=None
     )
+
 
 @app.route('/news/<int:news_id>')
 def show_news(news_id):

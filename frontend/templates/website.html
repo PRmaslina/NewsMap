@@ -20,6 +20,12 @@
                     <input type="text" name="query" placeholder="Введите новость или место..." value="{{ search_query if search_query else '' }}">
                     <button type="submit">Найти</button>
                 </form>
+                {% if date_info %}
+                <div class="date-info">
+                    <span class="date-badge">{{ date_info }}</span>
+                    <a href="/" class="clear-date">✕ Очистить</a>
+                </div>
+                {% endif %}
             </div>
 
             <uL class="news-list">
