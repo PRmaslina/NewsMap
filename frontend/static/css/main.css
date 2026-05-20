@@ -362,7 +362,7 @@ footer {
     }
 
 /* Адаптив для мобильных */
-/*
+
 @media (max-width: 768px) {
     .date-search form {
         flex-direction: column;

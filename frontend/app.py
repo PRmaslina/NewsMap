@@ -68,6 +68,7 @@ def search():
         "website.html", news_list=fresh_news, search_query=query, selected_news_id=None
     )
 
+
 @app.route("/search_by_date", methods=["POST"])
 def search_by_date():
     date_from_str = request.form.get("date_from", "")
