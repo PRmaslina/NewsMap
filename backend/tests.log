@@ -1,0 +1,789 @@
+============================= test session starts ==============================
+platform linux -- Python 3.14.4, pytest-8.3.4, pluggy-1.6.0 -- /home/bogotir697/.git/NewsMap/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/bogotir697/.git/NewsMap_2.0/backend
+configfile: pytest.ini
+plugins: anyio-4.13.0, asyncio-0.24.0
+asyncio: mode=Mode.AUTO, default_loop_scope=function
+collecting ... collected 12 items
+
+tests/test_api.py::test_health_check FAILED                              [  8%]
+tests/test_api.py::test_search_endpoint_success FAILED                   [ 16%]
+tests/test_api.py::test_get_article_not_found FAILED                     [ 25%]
+tests/test_application.py::test_create_article_success PASSED            [ 33%]
+tests/test_application.py::test_create_article_duplicate PASSED          [ 41%]
+tests/test_application.py::test_search_handler_calls_deps PASSED         [ 50%]
+tests/test_domain.py::test_article_factory PASSED                        [ 58%]
+tests/test_domain.py::test_assign_location_raises_event PASSED           [ 66%]
+tests/test_domain.py::test_relevance_calculation FAILED                  [ 75%]
+tests/test_domain.py::test_date_range_validation FAILED                  [ 83%]
+tests/test_infrastructure.py::test_natasha_query_processor FAILED        [ 91%]
+tests/test_infrastructure.py::test_in_memory_event_bus PASSED            [100%]
+
+=================================== FAILURES ===================================
+______________________________ test_health_check _______________________________
+  + Exception Group Traceback (most recent call last):
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 81, in collapse_excgroups
+  |     yield
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 341, in from_call
+    |     result: TResult | None = func()
+    |                              ~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 242, in <lambda>
+    |     lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+    |             ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/threadexception.py", line 92, in pytest_runtest_call
+    |     yield from thread_exception_runtest_hook()
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/threadexception.py", line 68, in thread_exception_runtest_hook
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/unraisableexception.py", line 95, in pytest_runtest_call
+    |     yield from unraisable_exception_runtest_hook()
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/unraisableexception.py", line 70, in unraisable_exception_runtest_hook
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/logging.py", line 846, in pytest_runtest_call
+    |     yield from self._runtest_for(item, "call")
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/logging.py", line 829, in _runtest_for
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/capture.py", line 880, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/skipping.py", line 257, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 174, in pytest_runtest_call
+    |     item.runtest()
+    |     ~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 457, in runtest
+    |     super().runtest()
+    |     ~~~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/python.py", line 1627, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/python.py", line 159, in pytest_pyfunc_call
+    |     result = testfunction(**testargs)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 929, in inner
+    |     _loop.run_until_complete(task)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    |   File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    |     return future.result()
+    |            ~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap_2.0/backend/tests/test_api.py", line 12, in test_health_check
+    |     resp = await ac.get("/health")
+    |            ^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1768, in get
+    |     return await self.request(
+    |            ^^^^^^^^^^^^^^^^^^^
+    |     ...<9 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1540, in request
+    |     return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1629, in send
+    |     response = await self._send_handling_auth(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<4 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    |     response = await self._send_handling_redirects(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    |     response = await self._send_single_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    |     response = await transport.handle_async_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_transports/asgi.py", line 170, in handle_async_request
+    |     await self.app(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1159, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    |     raise exc
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/usr/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap_2.0/backend/interfaces/api/fastapi/main.py", line 67, in db_session_middleware
+    |     async with request.app.state.db.get_session() as session:
+    |                ^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/datastructures.py", line 688, in __getattr__
+    |     raise AttributeError(message.format(self.__class__.__name__, key))
+    | AttributeError: 'State' object has no attribute 'db'
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+    @pytest.mark.asyncio
+    async def test_health_check():
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+>           resp = await ac.get("/health")
+
+tests/test_api.py:12: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1768: in get
+    return await self.request(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1540: in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1629: in send
+    response = await self._send_handling_auth(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1657: in _send_handling_auth
+    response = await self._send_handling_redirects(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1694: in _send_handling_redirects
+    response = await self._send_single_request(request)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1730: in _send_single_request
+    response = await transport.handle_async_request(request)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_transports/asgi.py:170: in handle_async_request
+    await self.app(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/fastapi/applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+/usr/lib/python3.14/contextlib.py:162: in __exit__
+    self.gen.throw(value)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py:87: in collapse_excgroups
+    raise exc
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+interfaces/api/fastapi/main.py:67: in db_session_middleware
+    async with request.app.state.db.get_session() as session:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <starlette.datastructures.State object at 0x7f84cf6cef90>, key = 'db'
+
+    def __getattr__(self, key: Any) -> Any:
+        try:
+            return self._state[key]
+        except KeyError:
+            message = "'{}' object has no attribute '{}'"
+>           raise AttributeError(message.format(self.__class__.__name__, key))
+E           AttributeError: 'State' object has no attribute 'db'
+
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/datastructures.py:688: AttributeError
+---------------------------- Captured stdout setup -----------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+------------------------------ Captured log setup ------------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+--------------------------- Captured stdout teardown ---------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+---------------------------- Captured log teardown -----------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+_________________________ test_search_endpoint_success _________________________
+  + Exception Group Traceback (most recent call last):
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 81, in collapse_excgroups
+  |     yield
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 341, in from_call
+    |     result: TResult | None = func()
+    |                              ~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 242, in <lambda>
+    |     lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+    |             ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/threadexception.py", line 92, in pytest_runtest_call
+    |     yield from thread_exception_runtest_hook()
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/threadexception.py", line 68, in thread_exception_runtest_hook
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/unraisableexception.py", line 95, in pytest_runtest_call
+    |     yield from unraisable_exception_runtest_hook()
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/unraisableexception.py", line 70, in unraisable_exception_runtest_hook
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/logging.py", line 846, in pytest_runtest_call
+    |     yield from self._runtest_for(item, "call")
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/logging.py", line 829, in _runtest_for
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/capture.py", line 880, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/skipping.py", line 257, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 174, in pytest_runtest_call
+    |     item.runtest()
+    |     ~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 457, in runtest
+    |     super().runtest()
+    |     ~~~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/python.py", line 1627, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/python.py", line 159, in pytest_pyfunc_call
+    |     result = testfunction(**testargs)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 929, in inner
+    |     _loop.run_until_complete(task)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    |   File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    |     return future.result()
+    |            ~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap_2.0/backend/tests/test_api.py", line 46, in test_search_endpoint_success
+    |     resp = await ac.post("/search", json=payload)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1859, in post
+    |     return await self.request(
+    |            ^^^^^^^^^^^^^^^^^^^
+    |     ...<13 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1540, in request
+    |     return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1629, in send
+    |     response = await self._send_handling_auth(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<4 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    |     response = await self._send_handling_redirects(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    |     response = await self._send_single_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    |     response = await transport.handle_async_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_transports/asgi.py", line 170, in handle_async_request
+    |     await self.app(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1159, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    |     raise exc
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/usr/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap_2.0/backend/interfaces/api/fastapi/main.py", line 67, in db_session_middleware
+    |     async with request.app.state.db.get_session() as session:
+    |                ^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/datastructures.py", line 688, in __getattr__
+    |     raise AttributeError(message.format(self.__class__.__name__, key))
+    | AttributeError: 'State' object has no attribute 'db'
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+override_api_deps = None
+mock_repo = <AsyncMock spec='ArticleRepository' id='140208385050672'>
+
+    @pytest.mark.asyncio
+    async def test_search_endpoint_success(override_api_deps, mock_repo):
+        from domain.models.article import Article, ArticleId
+    
+        # Подготовим фейковую статью для возврата
+        art = Article.create(
+            url="https://test.ru/1",
+            title="Пожар",
+            subtitle="Огонь",
+            published_at=datetime.now(timezone.utc),
+            region="",
+            city="",
+            address="",
+        )
+        art.id = ArticleId(1)
+        mock_repo.search.return_value = [art]
+    
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+            payload = {
+                "query": "пожар",
+                "date_range": {
+                    "date_from": "2024-01-01T00:00:00Z",
+                    "date_to": "2025-01-01T00:00:00Z",
+                },
+                "min_relevance": 0.0,
+                "limit": 5,
+            }
+>           resp = await ac.post("/search", json=payload)
+
+tests/test_api.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1859: in post
+    return await self.request(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1540: in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1629: in send
+    response = await self._send_handling_auth(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1657: in _send_handling_auth
+    response = await self._send_handling_redirects(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1694: in _send_handling_redirects
+    response = await self._send_single_request(request)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1730: in _send_single_request
+    response = await transport.handle_async_request(request)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_transports/asgi.py:170: in handle_async_request
+    await self.app(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/fastapi/applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+/usr/lib/python3.14/contextlib.py:162: in __exit__
+    self.gen.throw(value)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py:87: in collapse_excgroups
+    raise exc
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+interfaces/api/fastapi/main.py:67: in db_session_middleware
+    async with request.app.state.db.get_session() as session:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <starlette.datastructures.State object at 0x7f84cf6cef90>, key = 'db'
+
+    def __getattr__(self, key: Any) -> Any:
+        try:
+            return self._state[key]
+        except KeyError:
+            message = "'{}' object has no attribute '{}'"
+>           raise AttributeError(message.format(self.__class__.__name__, key))
+E           AttributeError: 'State' object has no attribute 'db'
+
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/datastructures.py:688: AttributeError
+---------------------------- Captured stdout setup -----------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+------------------------------ Captured log setup ------------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+--------------------------- Captured stdout teardown ---------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+---------------------------- Captured log teardown -----------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+__________________________ test_get_article_not_found __________________________
+  + Exception Group Traceback (most recent call last):
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 81, in collapse_excgroups
+  |     yield
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 192, in __call__
+  |     async with anyio.create_task_group() as task_group:
+  |                ~~~~~~~~~~~~~~~~~~~~~~~^^
+  |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/anyio/_backends/_asyncio.py", line 799, in __aexit__
+  |     raise BaseExceptionGroup(
+  |         "unhandled errors in a TaskGroup", self._exceptions
+  |     ) from None
+  | ExceptionGroup: unhandled errors in a TaskGroup (1 sub-exception)
+  +-+---------------- 1 ----------------
+    | Traceback (most recent call last):
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 341, in from_call
+    |     result: TResult | None = func()
+    |                              ~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 242, in <lambda>
+    |     lambda: runtest_hook(item=item, **kwds), when=when, reraise=reraise
+    |             ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/threadexception.py", line 92, in pytest_runtest_call
+    |     yield from thread_exception_runtest_hook()
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/threadexception.py", line 68, in thread_exception_runtest_hook
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/unraisableexception.py", line 95, in pytest_runtest_call
+    |     yield from unraisable_exception_runtest_hook()
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/unraisableexception.py", line 70, in unraisable_exception_runtest_hook
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/logging.py", line 846, in pytest_runtest_call
+    |     yield from self._runtest_for(item, "call")
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/logging.py", line 829, in _runtest_for
+    |     yield
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/capture.py", line 880, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/skipping.py", line 257, in pytest_runtest_call
+    |     return (yield)
+    |             ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/runner.py", line 174, in pytest_runtest_call
+    |     item.runtest()
+    |     ~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 457, in runtest
+    |     super().runtest()
+    |     ~~~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/python.py", line 1627, in runtest
+    |     self.ihook.pytest_pyfunc_call(pyfuncitem=self)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_hooks.py", line 512, in __call__
+    |     return self._hookexec(self.name, self._hookimpls.copy(), kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_manager.py", line 120, in _hookexec
+    |     return self._inner_hookexec(hook_name, methods, kwargs, firstresult)
+    |            ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 167, in _multicall
+    |     raise exception
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 139, in _multicall
+    |     teardown.throw(exception)
+    |     ~~~~~~~~~~~~~~^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 53, in run_old_style_hookwrapper
+    |     return result.get_result()
+    |            ~~~~~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_result.py", line 103, in get_result
+    |     raise exc.with_traceback(tb)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 38, in run_old_style_hookwrapper
+    |     res = yield
+    |           ^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pluggy/_callers.py", line 121, in _multicall
+    |     res = hook_impl.function(*args)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/_pytest/python.py", line 159, in pytest_pyfunc_call
+    |     result = testfunction(**testargs)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/pytest_asyncio/plugin.py", line 929, in inner
+    |     _loop.run_until_complete(task)
+    |     ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+    |   File "/usr/lib/python3.14/asyncio/base_events.py", line 719, in run_until_complete
+    |     return future.result()
+    |            ~~~~~~~~~~~~~^^
+    |   File "/home/bogotir697/.git/NewsMap_2.0/backend/tests/test_api.py", line 58, in test_get_article_not_found
+    |     resp = await ac.get("/articles/999")
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1768, in get
+    |     return await self.request(
+    |            ^^^^^^^^^^^^^^^^^^^
+    |     ...<9 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1540, in request
+    |     return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+    |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1629, in send
+    |     response = await self._send_handling_auth(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<4 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    |     response = await self._send_handling_redirects(
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |     ...<3 lines>...
+    |     )
+    |     ^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    |     response = await self._send_single_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    |     response = await transport.handle_async_request(request)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/httpx/_transports/asgi.py", line 170, in handle_async_request
+    |     await self.app(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/fastapi/applications.py", line 1159, in __call__
+    |     await super().__call__(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/applications.py", line 90, in __call__
+    |     await self.middleware_stack(scope, receive, send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    |     raise exc
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    |     await self.app(scope, receive, _send)
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 191, in __call__
+    |     with recv_stream, send_stream, collapse_excgroups():
+    |                                    ~~~~~~~~~~~~~~~~~~^^
+    |   File "/usr/lib/python3.14/contextlib.py", line 162, in __exit__
+    |     self.gen.throw(value)
+    |     ~~~~~~~~~~~~~~^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py", line 87, in collapse_excgroups
+    |     raise exc
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py", line 193, in __call__
+    |     response = await self.dispatch_func(request, call_next)
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap_2.0/backend/interfaces/api/fastapi/main.py", line 67, in db_session_middleware
+    |     async with request.app.state.db.get_session() as session:
+    |                ^^^^^^^^^^^^^^^^^^^^
+    |   File "/home/bogotir697/.git/NewsMap/.venv/lib/python3.14/site-packages/starlette/datastructures.py", line 688, in __getattr__
+    |     raise AttributeError(message.format(self.__class__.__name__, key))
+    | AttributeError: 'State' object has no attribute 'db'
+    +------------------------------------
+
+During handling of the above exception, another exception occurred:
+
+    @pytest.mark.asyncio
+    async def test_get_article_not_found():
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+>           resp = await ac.get("/articles/999")
+
+tests/test_api.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1768: in get
+    return await self.request(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1540: in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1629: in send
+    response = await self._send_handling_auth(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1657: in _send_handling_auth
+    response = await self._send_handling_redirects(
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1694: in _send_handling_redirects
+    response = await self._send_single_request(request)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_client.py:1730: in _send_single_request
+    response = await transport.handle_async_request(request)
+../../NewsMap/.venv/lib/python3.14/site-packages/httpx/_transports/asgi.py:170: in handle_async_request
+    await self.app(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/fastapi/applications.py:1159: in __call__
+    await super().__call__(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/applications.py:90: in __call__
+    await self.middleware_stack(scope, receive, send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py:191: in __call__
+    with recv_stream, send_stream, collapse_excgroups():
+/usr/lib/python3.14/contextlib.py:162: in __exit__
+    self.gen.throw(value)
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/_utils.py:87: in collapse_excgroups
+    raise exc
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/middleware/base.py:193: in __call__
+    response = await self.dispatch_func(request, call_next)
+interfaces/api/fastapi/main.py:67: in db_session_middleware
+    async with request.app.state.db.get_session() as session:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <starlette.datastructures.State object at 0x7f84cf6cef90>, key = 'db'
+
+    def __getattr__(self, key: Any) -> Any:
+        try:
+            return self._state[key]
+        except KeyError:
+            message = "'{}' object has no attribute '{}'"
+>           raise AttributeError(message.format(self.__class__.__name__, key))
+E           AttributeError: 'State' object has no attribute 'db'
+
+../../NewsMap/.venv/lib/python3.14/site-packages/starlette/datastructures.py:688: AttributeError
+---------------------------- Captured stdout setup -----------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+------------------------------ Captured log setup ------------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+--------------------------- Captured stdout teardown ---------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+---------------------------- Captured log teardown -----------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+__________________________ test_relevance_calculation __________________________
+
+    def test_relevance_calculation():
+        art = Article.create(
+            url="https://test.ru/3",
+            title="Пожар в Москве",
+            subtitle="Горит здание",
+            published_at=datetime.now(timezone.utc),
+            region="",
+            city="",
+            address="",
+        )
+        art.calculate_relevance("пожар москва", ["москва"])
+        assert 0.0 <= art._relevance_score <= 1.0
+>       assert art.is_relevant(threshold=0.2) is True
+E       AssertionError: assert False is True
+E        +  where False = is_relevant(threshold=0.2)
+E        +    where is_relevant = Article(id=None, content=NewsContent(url='https://test.ru/3', title='Пожар в Москве', subtitle='Горит здание', published_at=datetime.datetime(2026, 5, 20, 14, 29, 38, 572589, tzinfo=datetime.timezone.utc), tags=[]), location=Location(region='', city='', address='', coordinates=None, confidence=0.0), _relevance_score=0.15, _events=[]).is_relevant
+
+tests/test_domain.py:60: AssertionError
+__________________________ test_date_range_validation __________________________
+
+    def test_date_range_validation():
+        assert DateRange(
+            date_from=datetime.now(timezone.utc), date_to=datetime.now(timezone.utc)
+        )
+>       with pytest.raises(ValueError, match="date_to must be greater"):
+E       Failed: DID NOT RAISE <class 'ValueError'>
+
+tests/test_domain.py:67: Failed
+_________________________ test_natasha_query_processor _________________________
+
+    @pytest.mark.asyncio
+    async def test_natasha_query_processor():
+        # Natasha тяжелая, но для unit-теста можно проверить структуру возврата
+>       proc = NatashaQueryProcessor()
+
+tests/test_infrastructure.py:11: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+infrastructure/external/natasha_processor.py:18: in __init__
+    os.makedirs(cache_dir, exist_ok=True)
+<frozen os>:226: in makedirs
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = '/app', mode = 511, exist_ok = True
+
+>   ???
+E   PermissionError: [Errno 13] Permission denied: '/app'
+
+<frozen os>:236: PermissionError
+---------------------------- Captured stdout setup -----------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+------------------------------ Captured log setup ------------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+--------------------------- Captured stdout teardown ---------------------------
+2026-05-20 17:29:38 | DEBUG    | asyncio | Using selector: EpollSelector
+---------------------------- Captured log teardown -----------------------------
+DEBUG    asyncio:selector_events.py:64 Using selector: EpollSelector
+=========================== short test summary info ============================
+FAILED tests/test_api.py::test_health_check - AttributeError: 'State' object ...
+FAILED tests/test_api.py::test_search_endpoint_success - AttributeError: 'Sta...
+FAILED tests/test_api.py::test_get_article_not_found - AttributeError: 'State...
+FAILED tests/test_domain.py::test_relevance_calculation - AssertionError: ass...
+FAILED tests/test_domain.py::test_date_range_validation - Failed: DID NOT RAI...
+FAILED tests/test_infrastructure.py::test_natasha_query_processor - Permissio...
+========================= 6 failed, 6 passed in 0.37s ==========================

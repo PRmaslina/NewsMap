@@ -1,3 +1,4 @@
+
 services:
   database:
     image: 'postgres:17-alpine'
@@ -27,6 +28,11 @@ services:
     build:
       context: ./backend/
       dockerfile: Dockerfile
+      # Используем сеть хоста во время сборки, чтобы дотянуться до v2rayA
+      network: host
+      args:
+        - http_proxy=http://127.0.0.1:20171
+        - https_proxy=http://127.0.0.1:20171
     image: 'backend:latest'
     container_name: newsmap-backend
     volumes:
@@ -52,18 +58,20 @@ services:
     build:
       context: ./parser/
       dockerfile: Dockerfile
+      # Используем сеть хоста во время сборки, чтобы дотянуться до v2rayA
+      network: host
+      args:
+        - http_proxy=http://127.0.0.1:20171
+        - https_proxy=http://127.0.0.1:20171
     image: 'newsmap-parser'
     container_name: newsmap-parser
     ports:
       - '5001:5001'
     environment:
       - RUN_ON_START=false
-      # URL бэкенда внутри сети Docker
       - BACKEND_URL=http://backend:8000
-      # Путь к модели внутри контейнера
       - MODEL_PATH=models/good_news_finder.pkl
     volumes:
-      # Модель и json_data берём снаружи, чтобы не пересобирать образ при обновлении
       - ./parser/models:/app/models:ro
       - ./parser/json_data:/app/json_data
     healthcheck:
@@ -82,6 +90,11 @@ services:
     build:
       context: ./frontend/
       dockerfile: Dockerfile
+      # Используем сеть хоста во время сборки, чтобы дотянуться до v2rayA
+      network: host
+      args:
+        - http_proxy=http://127.0.0.1:20171
+        - https_proxy=http://127.0.0.1:20171
     image: 'newsmap-frontend'
     container_name: newsmap-frontend
     ports:
@@ -113,3 +126,4 @@ networks:
     driver: bridge
 volumes:
   natasha_cache:
+

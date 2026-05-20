@@ -14,7 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import REGCONFIG, JSONB
 from sqlalchemy.ext.asyncio import AsyncSession
 from domain.models.article import Article, ArticleId
-from domain.share.value_objects.date_range import DateRange
+from domain.shared.value_objects.date_range import DateRange
 from domain.repositories.article_repository import ArticleRepository
 from ..models import ArticleORM
 

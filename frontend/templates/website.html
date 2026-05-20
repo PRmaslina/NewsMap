@@ -31,11 +31,18 @@
                 <p>Последние новости с геолокацией</p>
             </div>
 
-            <div class="search-box">
-              <form class="search-form" method="POST" action="/search">
+            <form class="search-form" method="POST" action="/search">
+              <div class="search-box">
                 <input type="text" name="query" placeholder="Введите новость или место..." value="{{ search_query if search_query else '' }}">
                 <button type="submit">Найти</button>
-              </form>
+
+                <div class="date-search">
+                  <input type="date" name="date_from" placeholder="Дата от">
+                  <span>—</span>
+                  <input type="date" name="date_to" placeholder="Дата до">
+                </div>
+            </form>
+
                 {% if date_info %}
                 <div class="date-info">
                     <span class="date-badge">{{ date_info }}</span>

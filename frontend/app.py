@@ -1,8 +1,10 @@
 from datetime import *
-from flask import Flask, request, render_template, url_for, redirect, jsonify, flash
-from geo import generate_map
-import requests
 import os
+from typing import Optional
+import requests
+
+from flask import Flask, flash, jsonify, redirect, render_template, request, url_for
+from geo import generate_map
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-fallback-key-12345")
@@ -17,9 +19,14 @@ def get_news():
     return resp.json()
 
 
-def search_backend(query: str, date_from: datetime, date_to: datetime):
+def search_backend(
+    query: str, date_from: Optional[datetime] = None, date_to: Optional[datetime] = None
+):
     url = f"{BACKEND_URL}/search"
-
+    if isinstance(date_from, datetime):
+        date_from = date_from.isoformat()  # type: ignore
+    if isinstance(date_to, datetime):
+        date_to = date_to.isoformat()  # type: ignore
     payload = {
         "query": query,
         "date_range": {"date_from": date_from, "date_to": date_to},
@@ -52,20 +59,58 @@ def index():
 @app.route("/search", methods=["POST"])
 def search():
     query = (request.form.get("query", "") or "").strip().lower()
+    date_from_str = request.form.get("date_from", "")
+    date_to_str = request.form.get("date_to", "")
 
-    if not query:
-        flash("Введите поисковый запрос 🔍", "info")
-        return redirect(url_for("index"))
+    # 🎯 Дефолтные даты: 2000–2100, если не указаны
+    DEFAULT_FROM = datetime(2000, 1, 1)
+    DEFAULT_TO = datetime(2100, 12, 31)
 
-    fresh_news = search_backend(query)
+    date_from = None
+    date_to = None
+    date_info = None
+
+    # Парсинг date_from
+    if date_from_str:
+        try:
+            date_from = datetime.strptime(date_from_str, "%Y-%m-%d")
+        except ValueError:
+            date_from = DEFAULT_FROM  # fallback при ошибке формата
+    else:
+        date_from = DEFAULT_FROM
+
+    # Парсинг date_to
+    if date_to_str:
+        try:
+            date_to = datetime.strptime(date_to_str, "%Y-%m-%d")
+        except ValueError:
+            date_to = DEFAULT_TO  # fallback при ошибке формата
+    else:
+        date_to = DEFAULT_TO
+
+    # Формирование строки для отображения
+    if date_from and date_to:
+        if date_from == DEFAULT_FROM and date_to == DEFAULT_TO:
+            date_info = "📅 Все за время"
+        elif date_from == date_to:
+            date_info = f"📅 {date_from.strftime('%d.%m.%Y')}"
+        else:
+            date_info = (
+                f"📅 {date_from.strftime('%d.%m.%Y')} — {date_to.strftime('%d.%m.%Y')}"
+            )
+    filtered_news = search_backend(query, date_from, date_to)
     lat, lon = None, None
-    if fresh_news:
-        location = fresh_news[0].location
-        lat = location.latitude
-        lon = location.longitude
-        generate_map(fresh_news, center_lat=lat, center_lon=lon)
+    if filtered_news:
+        location = filtered_news[0]["location"]
+        lat = location["latitude"]
+        lon = location["longitude"]
+        generate_map(filtered_news, center_lat=lat, center_lon=lon)
     return render_template(
-        "website.html", news_list=fresh_news, search_query=query, selected_news_id=None
+        "website.html",
+        news_list=filtered_news,
+        search_query=None,
+        selected_news_id=None,
+        date_info=date_info,
     )
 
 
