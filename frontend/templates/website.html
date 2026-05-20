@@ -36,6 +36,22 @@
                     <input type="text" name="query" placeholder="Введите новость или место..." value="{{ search_query if search_query else '' }}">
                     <button type="submit">Найти</button>
                 </form>
+
+                <div class="date-search">
+                    <form method="POST" action="/search_by_date">
+                        <input type="date" name="date_from" placeholder="Дата от">
+                        <span>—</span>
+                        <input type="date" name="date_to" placeholder="Дата до">
+                        <button type="submit">📅 Найти по дате</button>
+                    </form>
+                </div>
+
+                {% if date_info %}
+                <div class="date-info">
+                    <span class="date-badge">{{ date_info }}</span>
+                    <a href="/" class="clear-date">✕ Очистить</a>
+                </div>
+                {% endif %}
             </div>
 
             <uL class="news-list">
